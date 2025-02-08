@@ -1,20 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>John Wesley</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="John Wesley - Engineering Manager and Technology Leader specializing in cloud-native technologies and DevOps practices">
+    <meta name="keywords" content="Engineering Manager, Cloud Native, DevOps, Kubernetes, Technology Leader">
+    <meta name="author" content="John Wesley">
+    <title>Engineering Manager</title>
+    <style>
+        :root {
+            --primary-color: #2d3748;
+            --secondary-color: #4a5568;
+            --accent-color: #3182ce;
+            --background-color: #f7fafc;
+            --card-background: white;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #e2e8f0;
+            --secondary-color: #cbd5e0;
+            --accent-color: #63b3ed;
+            --background-color: #1a202c;
+            --card-background: #2d3748;
+            --shadow-color: rgba(0,0,0,0.3);
+        }
+
+        /* Theme toggle styles */
+        .theme-switch {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .theme-switch label {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 1px 3px var(--shadow-color);
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch label:hover {
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        #theme-toggle:checked ~ main {
+            color-scheme: dark;
+        }
+
+        #theme-toggle:checked ~ main [data-theme="light"] {
+            display: none;
+        }
+
+        #theme-toggle:not(:checked) ~ main [data-theme="dark"] {
+            display: none;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* System dark mode preference */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #e2e8f0;
+        --secondary-color: #cbd5e0;
+        --accent-color: #63b3ed;
+        --background-color: #1a202c;
+        --card-background: #2d3748;
+        --shadow-color: rgba(0,0,0,0.3);
+    }
+}
+
+body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            background-color: var(--background-color);
+        }
+
+        header {
+            background-color: var(--card-background);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Ensure header content is also constrained */
+        header .header-content {
+            width: 95%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .skill-tag {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .contact {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact a:hover {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-	<header>
-		<h1>John Wesley</h1>
-		<nav>
-			<ul>
-				<li><a href="https://www.linkedin.com/in/john-wesley-9222b95a/">LinkedIn</a></li>
-			</ul>
-		</nav>
-	</header>
-	<main>
-		<p>Software Engineer</p>
-	</main>
+    <div class="theme-switch">
+        <input type="checkbox" id="theme-toggle">
+        <label for="theme-toggle">🌙 Dark Mode</label>
+    </div>
+    <header>
+        <div class="header-content">
+            <h1>John Wesley</h1>
+            <p>Engineering Manager | Technologist</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>About Me</h2>
+            <p>Engineering leader dedicated to uniting teams and creating efficient, cost-effective production environments. Specializes in cloud-native technologies and DevOps practices, with a focus on reducing friction and overhead. Committed to fostering collaboration and delivering impactful solutions.</p>
+            <div class="skills">
+                <span class="skill-tag">Financial Technology Experience</span>
+                <span class="skill-tag">Cloud-Native Specialist (Kubernetes, Containers)</span>
+                <span class="skill-tag">DevOps Practitioner</span>
+                <span class="skill-tag">Team Management & Leadership</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Experience</h2>
+            <p>Currently serving as an Engineering Manager at <a href="https://www.trumid.com/" style="color: var(--accent-color); text-decoration: none;">Trumid</a> while modernizing infrastructures with cloud-native technologies, leading DevOps transformations, and mentoring diverse engineering teams. Previous positions at Business Insider, Bloomberg, and Fiserv shaped a deep expertise in Kubernetes, AWS, GCP, and large-scale infrastructure deployments. For a detailed account of specific roles, responsibilities, and accomplishments, please see LinkedIn.</p>
+        </section>
+
+        <section>
+            <h2>Contact</h2>
+            <div class="contact">
+                <a href="https://github.com/johnwesley">GitHub</a>
+                <a href="https://www.linkedin.com/in/john-wesley-9222b95a">LinkedIn</a>
+            </div>
+        </section>
+    </div>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
+        }
+
+        // Handle theme toggle
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
 </body>
 </html>
