@@ -222,24 +222,28 @@ body {
         </section>
     </div>
     <script>
-        const themeToggle = document.getElementById('theme-toggle');
-        
-        // Check for saved theme preference
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.checked = true;
-        }
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeLabel = document.querySelector('label[for="theme-toggle"]');
+    
+    // Check for saved theme preference
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.checked = true;
+        themeLabel.textContent = '☀️ Light Mode';
+    }
 
-        // Handle theme toggle
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    </script>
+    // Handle theme toggle
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            themeLabel.textContent = '☀️ Light Mode';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            themeLabel.textContent = '🌙 Dark Mode';
+        }
+    });
+</script>
 </body>
 </html>
