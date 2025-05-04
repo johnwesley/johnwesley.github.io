@@ -1,33 +1,20 @@
-# Personal Website
+# Personal Website (johnwesley.me)
 
-A minimal, responsive personal website showcasing my professional experience as an Engineering Manager and Technology Leader.
+[![Deploy Jekyll site to Pages](https://github.com/johnwesley/johnwesley.github.io/actions/workflows/jekyll-gh-pages.yml/badge.svg)](https://github.com/johnwesley/johnwesley.github.io/actions/workflows/jekyll-gh-pages.yml)
+
+A minimal, responsive Jekyll-based personal website hosted on GitHub Pages.
 
 ## Features
 
-- Responsive design
-- Dark/Light mode toggle with system preference detection
-- Clean, modern UI
-- Built with vanilla HTML, CSS, and JavaScript
-- Fast loading and lightweight
+* Simple, clean, responsive design
+* Dark/Light mode toggle (respects system preference)
+* Built with Jekyll, HTML, CSS, and vanilla JavaScript
+* Includes a basic "Climbing Journal" blog section
 
 ## Live Site
 
-Visit the live site at [www.johnwesley.me](https://www.johnwesley.me)
-
-## Local Development
-
-Simply open index.html in a web browser to view the site locally.
+[www.johnwesley.me](https://www.johnwesley.me)
 
 ## License
 
-MIT
-
-```text
-Copyright (c) 2025 John Wesley
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

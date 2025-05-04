@@ -1,0 +1,22 @@
+---
+layout: default
+title: Climbing Journal
+permalink: /blog.html # Or just /blog/
+---
+
+<section>
+  <h2>Climbing Journal</h2>
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
+        <h3>
+          <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        </h3>
+        <p class="post-meta">{{ post.date | default: site.time | date: "%b %-d, %Y" }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p>Find the full archive <a href="{{ '/archive.html' | relative_url }}">here</a>.</p>
+
+</section> 
