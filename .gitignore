@@ -1,0 +1,23 @@
+# Jekyll build output
+_site/
+
+# Jekyll Caches
+.jekyll-cache/
+.jekyll-metadata
+
+# Sass Caches
+.sass-cache/
+
+# Bundler
+.bundle/
+vendor/bundle/
+
+# Node Modules (if used for asset pipelines)
+# node_modules/
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log 
