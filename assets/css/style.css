@@ -1,22 +1,35 @@
 :root {
-    --primary-color: #2d3748;
-    --secondary-color: #4a5568;
-    --accent-color: #3182ce;
-    --background-color: #f7fafc;
-    --card-background: white;
-    --shadow-color: rgba(0,0,0,0.1);
+    --text-color: #000;
+    --background-color: #fff;
+    --link-color: #0000ee;
+    --link-hover: #551a8b;
+    --muted-color: #666;
 }
 
 [data-theme="dark"] {
-    --primary-color: #e2e8f0;
-    --secondary-color: #cbd5e0;
-    --accent-color: #63b3ed;
-    --background-color: #1a202c;
-    --card-background: #2d3748;
-    --shadow-color: rgba(0,0,0,0.3);
+    --text-color: #e0e0e0;
+    --background-color: #1a1a1a;
+    --link-color: #66b3ff;
+    --link-hover: #99ccff;
+    --muted-color: #999;
 }
 
-/* Theme toggle styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme toggle */
 .theme-switch {
     position: fixed;
     top: 1rem;
@@ -30,233 +43,167 @@
 
 .theme-switch label {
     cursor: pointer;
-    padding: 0.5rem 1rem;
-    background-color: var(--card-background);
-    border-radius: 20px;
-    box-shadow: 0 1px 3px var(--shadow-color);
-    color: var(--primary-color);
-    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    background-color: var(--background-color);
+    border: 1px solid var(--muted-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 0.85rem;
     transition: all 0.3s ease;
 }
 
 .theme-switch label:hover {
-    box-shadow: 0 2px 5px var(--shadow-color);
+    opacity: 0.7;
 }
 
-#theme-toggle:checked ~ main {
-    color-scheme: dark;
-}
-
-#theme-toggle:checked ~ main [data-theme="light"] {
-    display: none;
-}
-
-#theme-toggle:not(:checked) ~ main [data-theme="dark"] {
-    display: none;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* System dark mode preference - removed as JS handles this */
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
-    color: var(--primary-color);
-    background-color: var(--background-color);
-}
-
+/* Header */
 header {
-    background-color: var(--card-background);
-    padding: 2rem 1rem;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 3rem 0 2rem;
 }
 
-.container {
-    width: 95%;
-    max-width: 800px;
+.header-content {
+    max-width: 650px;
     margin: 0 auto;
-    padding: 2rem 1rem;
-}
-
-/* Ensure header content is also constrained */
-header .header-content {
-    width: 95%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-section {
-    margin-bottom: 3rem;
-    background-color: var(--card-background);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 0 1rem;
 }
 
 h1 {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-h2 {
-    font-size: 1.8rem;
-    color: var(--secondary-color);
-    margin-bottom: 1.5rem;
-}
-
-p {
-    margin-bottom: 1rem;
-}
-
-/* Style header links */
-header nav {
-    margin-top: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
 }
 
 .site-title {
-    color: inherit;
+    color: var(--text-color);
     text-decoration: none;
 }
 
-.nav-link {
-    color: var(--accent-color);
-    text-decoration: none;
-    margin: 0 10px;
-    transition: color 0.3s ease;
+.site-title:hover {
+    opacity: 0.7;
 }
 
-.nav-link:hover {
-    color: var(--primary-color);
+/* Main content */
+.container {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
 }
 
-/* Style link in Experience section */
-section p a {
-    color: var(--accent-color);
-    text-decoration: none;
+.content {
+    font-size: 1rem;
 }
 
-section p a:hover {
+.content p {
+    margin-bottom: 1.5rem;
+}
+
+.content h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.content p:first-child {
+    margin-top: 0;
+}
+
+/* Links */
+a {
+    color: var(--link-color);
     text-decoration: underline;
 }
 
-.skills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
+a:hover {
+    color: var(--link-hover);
 }
 
-.skill-tag {
-    background-color: var(--accent-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
+a:visited {
+    color: var(--link-hover);
 }
 
-.contact {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.contact a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.contact a:hover {
-    color: var(--primary-color);
-}
-
+/* Mobile responsive */
 @media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    
+    header {
+        padding: 2rem 1rem 1.5rem;
+    }
+    
     h1 {
-        font-size: 2rem;
+        font-size: 1.3rem;
     }
-
-    h2 {
-        font-size: 1.5rem;
+    
+    .content h2 {
+        font-size: 1.1rem;
+        margin-top: 2rem;
     }
-
-    .contact {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
+    
+    .container {
+        padding: 0 1rem 3rem;
+    }
+    
+    .theme-switch {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .theme-switch label {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
     }
 }
 
-/* Add styles for blog post list if needed */
+/* Small mobile */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: 1.2rem;
+    }
+    
+    .content h2 {
+        font-size: 1rem;
+    }
+}
+
+/* Blog styles - keeping minimal */
 .post-list {
-  list-style: none;
-  padding-left: 0;
+    list-style: none;
 }
 
 .post-list li {
-  margin-bottom: 1.5rem;
-}
-
-.post-list h3 {
-  margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .post-list a {
-  text-decoration: none;
-  color: var(--accent-color);
-}
-
-.post-list a:hover {
-  text-decoration: underline;
+    font-weight: 500;
 }
 
 .post-meta {
-  font-size: 0.9rem;
-  color: var(--secondary-color);
-}
-
-/* Add styles for individual blog posts if needed */
-.post-header {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.post-title {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
+    color: var(--muted-color);
+    font-size: 0.9rem;
 }
 
 .post-content {
-  line-height: 1.7;
+    line-height: 1.7;
 }
 
-.post-content h2, .post-content h3, .post-content h4 {
+.post-content h2,
+.post-content h3,
+.post-content h4 {
     margin-top: 2rem;
     margin-bottom: 1rem;
-    color: var(--secondary-color);
+    font-weight: 600;
 }
 
 .post-content img {
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 1.5rem auto;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px var(--shadow-color);
+    margin: 1.5rem 0;
 }
-
-.post-content a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-.post-content a:hover {
-    text-decoration: underline;
-} 
