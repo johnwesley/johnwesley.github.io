@@ -1,5 +1,7 @@
 # Personal Website (johnwesley.me)
 
+[![Build and deploy](https://github.com/johnwesley/johnwesley.github.io/actions/workflows/pages.yml/badge.svg)](https://github.com/johnwesley/johnwesley.github.io/actions/workflows/pages.yml)
+
 A minimal, responsive Jekyll-based personal website hosted on GitHub Pages.
 
 ## Features
