@@ -1,40 +1,33 @@
-const themeToggle = document.getElementById('theme-toggle');
-const themeLabel = document.querySelector('label[for="theme-toggle"]');
-const root = document.documentElement;
+(function () {
+    var root = document.documentElement;
+    var toggle = document.getElementById('theme-toggle');
+    var media = window.matchMedia('(prefers-color-scheme: dark)');
 
-function applyTheme(theme) {
-    root.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    if (theme === 'dark') {
-        themeToggle.checked = true;
-        themeLabel.textContent = '☀️ Light Mode';
-    } else {
-        themeToggle.checked = false;
-        themeLabel.textContent = '🌙 Dark Mode';
+    function saved() {
+        try {
+            var t = localStorage.getItem('theme');
+            return t === 'light' || t === 'dark' ? t : null;
+        } catch (e) { return null; }
     }
-}
 
-// Check for saved theme preference
-const savedTheme = localStorage.getItem('theme');
-// Check for system preference if no saved preference
-const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-if (savedTheme) {
-    applyTheme(savedTheme);
-} else if (prefersDark) {
-    applyTheme('dark');
-} else {
-    applyTheme('light'); // Default to light if nothing else
-}
-
-// Listen for system theme changes
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if (!localStorage.getItem('theme')) { // Only change if user hasn't manually set a theme
-         applyTheme(e.matches ? 'dark' : 'light');
+    function apply(theme) {
+        root.setAttribute('data-theme', theme);
+        if (toggle) {
+            toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        }
     }
-});
 
-// Handle manual theme toggle
-themeToggle.addEventListener('change', function() {
-    applyTheme(this.checked ? 'dark' : 'light');
-}); 
+    apply(saved() || (media.matches ? 'dark' : 'light'));
+
+    media.addEventListener('change', function (e) {
+        if (!saved()) apply(e.matches ? 'dark' : 'light');
+    });
+
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('theme', next); } catch (e) {}
+            apply(next);
+        });
+    }
+})();

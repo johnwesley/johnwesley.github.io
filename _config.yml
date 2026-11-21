@@ -1,7 +1,9 @@
 theme: minima
 title: John Wesley
 description: >-
-  Engineering Manager and Technology Leader specializing in cloud-native technologies and DevOps practices
+  Identity and access security for financial-markets infrastructure: Zero Trust
+  across AWS, Azure/Entra ID, GCP and Kubernetes, AI security and agentic engineering
+tagline: "Identity & Zero Trust across AWS, Azure/Entra ID, GCP & Kubernetes · AI security & agentic engineering"
 
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://www.johnwesley.me" # the base hostname & protocol for your site

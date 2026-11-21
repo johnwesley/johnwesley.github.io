@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ page.description | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
-    <meta name="keywords" content="Engineering Manager, Cloud Native, DevOps, Kubernetes, Technology Leader">
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="{{ page.description | default: site.description | strip_html | normalize_whitespace | truncate: 200 | escape }}">
+    <meta name="keywords" content="Identity Security, Zero Trust, IAM, AWS, Azure Entra ID, GCP, Kubernetes, AI Security, Agentic Engineering, Platform Engineering">
     <meta name="author" content="John Wesley">
     <title>{{ page.title | default: site.title | escape }}</title>
+    <script>
+    (function () {
+        var theme;
+        try { theme = localStorage.getItem('theme'); } catch (e) {}
+        if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
 <body>
-    <div class="theme-switch">
-        <input type="checkbox" id="theme-toggle">
-        <label for="theme-toggle">🌙 Dark Mode</label>
-    </div>
     <header>
         <div class="header-content">
-            <h1><a href="{{ '/' | relative_url }}" class="site-title">{{ site.title | escape }}</a></h1>
+            <img class="avatar" src="{{ '/assets/images/avatar.jpg' | relative_url }}" alt="John Wesley's avatar" width="64" height="64">
+            <div class="site-heading">
+                <h1><a href="{{ '/' | relative_url }}" class="site-title">{{ site.title | escape }}</a></h1>
+                <p class="site-tagline">{{ site.tagline | escape }}</p>
+            </div>
+            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode">
+                <svg class="icon-moon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+                <svg class="icon-sun" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+            </button>
         </div>
     </header>
 
@@ -26,4 +41,4 @@
 
     <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
 </body>
-</html> 
+</html>

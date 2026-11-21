@@ -29,49 +29,71 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Theme toggle */
-.theme-switch {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1000;
-}
-
-.theme-switch input {
-    display: none;
-}
-
-.theme-switch label {
-    cursor: pointer;
-    padding: 0.4rem 0.8rem;
-    background-color: var(--background-color);
-    border: 1px solid var(--muted-color);
-    border-radius: 4px;
-    color: var(--text-color);
-    font-size: 0.85rem;
-    transition: all 0.3s ease;
-}
-
-.theme-switch label:hover {
-    opacity: 0.7;
-}
+:root { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
 
 /* Header */
 header {
-    padding: 3rem 0 2rem;
+    padding: 3rem 0 4rem;
 }
 
 .header-content {
     max-width: 650px;
     margin: 0 auto;
     padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.site-heading {
+    min-width: 0;
 }
 
 h1 {
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 2rem;
+    line-height: 1.3;
+    margin-bottom: 0;
 }
+
+.site-tagline {
+    margin-top: 2px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--muted-color);
+}
+
+/* Theme toggle */
+.theme-toggle {
+    flex: none;
+    margin-left: auto;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.theme-toggle:hover { opacity: 0.7; }
+.theme-toggle:focus-visible { outline: 2px solid var(--link-color); outline-offset: 2px; }
+
+.theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
 
 .site-title {
     color: var(--text-color);
@@ -129,7 +151,7 @@ a:visited {
     }
     
     header {
-        padding: 2rem 0 1.5rem;
+        padding: 2rem 0 3.5rem;
     }
     
     h1 {
@@ -143,16 +165,6 @@ a:visited {
     
     .container {
         padding: 0 1rem 3rem;
-    }
-    
-    .theme-switch {
-        top: 0.5rem;
-        right: 0.5rem;
-    }
-    
-    .theme-switch label {
-        font-size: 0.8rem;
-        padding: 0.3rem 0.6rem;
     }
 }
 
@@ -168,6 +180,15 @@ a:visited {
     
     .content h2 {
         font-size: 1rem;
+    }
+
+    .avatar {
+        width: 56px;
+        height: 56px;
+    }
+
+    .header-content {
+        gap: 0.75rem;
     }
 }
 
