@@ -6,7 +6,7 @@
 :root {
     --svu-security: #1d4ed8;   /* 6.7:1 on #fff */
     --svu-usability: #b45309;  /* 5.0:1 on #fff */
-    --svu-hit: 44px;           /* slider handle tap target */
+    --svu-hit: 44px;           /* slider handle tap target; keep it in px: the script reads it */
     --svu-handle: 28px;        /* visible part of the handle */
     --svu-track: 4px;
 }
@@ -105,8 +105,8 @@
     border-radius: 2px;
 }
 
-/* The handle is 44px square to tap; a transparent border leaves a 28px
-   visible circle. box-shadow: none removes iOS Safari's default handle
+/* The handle is a 44px circle to tap; a transparent border leaves a 28px
+   visible dot. box-shadow: none removes iOS Safari's default handle
    shadow. */
 .svu input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -259,7 +259,7 @@
     padding-right: 0;
 }
 
-/* Source and review date */
+/* Review date */
 .svu-footer {
     margin-top: 3rem;
     font-size: 0.9em;

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Security vs. usability
-description: Two linked sliders showing what identity controls cost the people who use them.
+description: Two linked sliders showing what security controls cost the people who use them.
 permalink: /security-vs-usability/
 stylesheet: /assets/css/security-vs-usability.css
 csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'"
@@ -25,8 +25,10 @@ csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; f
 {%- comment -%}
   A stop has a usable `better` when the phrase has at least one letter or
   digit (slugify drops everything else, including Unicode spaces) and
-  better_at is a whole number from 0 to N-1. One "1"/"0" per stop, used by the table, the
-  sizers and the script's data, so all three always agree.
+  better_at is a number from 0 to N-1 (fractions such as 8.5 are fine; the
+  text must read back unchanged as a number, so a quoted "8.50" fails). One
+  "1"/"0" per stop, used by the table, the sizers and the script's data, so
+  all three always agree.
 {%- endcomment -%}
 {%- assign better_flags = "" -%}
 {%- for stop in stops -%}
@@ -34,7 +36,7 @@ csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; f
   {%- if better_text != "" -%}{%- assign better_text = better_text | slugify: "default" -%}{%- endif -%}
   {%- assign at_text = stop.better_at | append: "" | strip -%}
   {%- assign at_num = at_text | plus: 0 -%}
-  {%- assign at_check = at_num | round | append: "" -%}
+  {%- assign at_check = at_num | append: "" -%}
   {%- if better_text != "" and at_text != "" and at_check == at_text and at_num >= 0 and at_num <= last_stop -%}
     {%- assign better_flags = better_flags | append: "1" -%}
   {%- else -%}
@@ -51,7 +53,7 @@ csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; f
 
 <div class="content svu">
     <h2 class="svu-title">Security vs. usability</h2>
-    <p class="svu-lede">Identity: {{ stop_count_words }} {% if stop_count == 1 %}rule{% else %}rules{% endif %} for getting in.</p>
+    <p class="svu-lede">{{ stop_count_words | capitalize }} {% if stop_count == 1 %}stop{% else %}stops{% endif %}. Each one adds a control to the ones before it.</p>
 
     <table class="svu-table" id="svu-table">
         <thead>
@@ -83,7 +85,7 @@ csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; f
          data-note-off="{{ note_off | escape }}"
          data-note-better="{{ note_better | escape }}"
          data-note-same="{{ note_same | escape }}">
-        <p class="svu-hint">Move either slider. The other one moves the opposite way.</p>
+        <p class="svu-hint">Move either slider.</p>
 
         <div class="svu-slider svu-slider-security">
             <label for="svu-security">Security</label>
@@ -153,7 +155,6 @@ csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; f
     </div>
 
     <footer class="svu-footer">
-        <p>Based on the Identity pillar of CISA's <a href="{{ svu.source.url | escape }}">{{ svu.source.label | escape }}</a>.</p>
         <p>Last reviewed <time datetime="{{ svu.last_reviewed | date: '%Y-%m-%d' }}">{{ svu.last_reviewed | date: "%B %-d, %Y" }}</time></p>
     </footer>
 </div>

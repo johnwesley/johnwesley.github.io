@@ -7,11 +7,18 @@
  *
  * State is two things: the current stop and whether the switch is on.
  * The usability slider moves only when the words change.
+ *
+ * Usability positions run from 0 (least usable) to N-1. With the switch off,
+ * stop i sits at N-1-i; with it on, a stop with a better version sits at its
+ * better_at, which need not be a whole number (8.5 sits between two ticks).
  */
 (function () {
     'use strict';
 
-    var START_STOP = 3;
+    // Positions closer than this are the same position (guards against
+    // floating-point noise, e.g. 0.1 + 0.2). Only for positions: whether the
+    // slider moved is an exact comparison, because the finest step is EPS.
+    var EPS = 1e-6;
 
     var app = document.getElementById('svu-app');
     var fallback = document.getElementById('svu-table');
@@ -54,11 +61,11 @@
         var better = null;
         var betterAt = null;
         if (s.better_ignored) {
-            warn('stop ' + i + ': better needs text and better_at needs a whole number from 0 to ' +
+            warn('stop ' + i + ': better needs text and better_at needs a number from 0 to ' +
                 (N - 1) + '; ignoring them.');
         }
         if (typeof s.better === 'string' && s.better !== '' && typeof s.better_at === 'number' &&
-            s.better_at === Math.floor(s.better_at) && s.better_at >= 0 && s.better_at <= N - 1) {
+            isFinite(s.better_at) && s.better_at >= 0 && s.better_at <= N - 1) {
             better = s.better;
             betterAt = s.better_at;
         }
@@ -78,11 +85,15 @@
         noteSame: app.getAttribute('data-note-same') || ''
     };
 
-    var state = { stop: Math.min(START_STOP, N - 1), better: false };
+    // Start in the middle (rounding down: stop 4 of 0..9), switch off.
+    var state = { stop: Math.floor((N - 1) / 2), better: false };
 
-    // The stop and usability position the usability slider last settled on.
+    // The stop and usability position the usability slider last settled on,
+    // and the value the slider really holds there (a position with more than
+    // six decimals is rounded to the slider's step).
     var settledStop = -1;
     var settledPos = -1;
+    var settledValue = -1;
 
     function improved(i) {
         return state.better && stops[i].better !== null;
@@ -96,40 +107,88 @@
         return improved(i) ? stops[i].better : stops[i].usability;
     }
 
-    // The stop whose usability position is nearest to u; on a tie, the more
-    // secure (higher-numbered) stop.
-    function stopForUsability(u) {
-        var best = 0;
+    function near(a, b) {
+        return Math.abs(a - b) <= EPS;
+    }
+
+    // The stop with the smallest distance(i), skipping stops where it returns
+    // null; on a tie, the more secure (higher-numbered) stop. -1 if none.
+    function closest(distance) {
+        var best = -1;
         var bestDist = Infinity;
         for (var i = 0; i < N; i++) {
-            var d = Math.abs(usabilityPos(i) - u);
-            if (d <= bestDist) {
+            var d = distance(i);
+            if (d === null) continue;
+            if (d < bestDist - EPS || near(d, bestDist)) {
                 best = i;
-                bestDist = d;
+                bestDist = Math.min(bestDist, d);
             }
         }
         return best;
     }
 
-    // A one-step move (arrow key, screen-reader swipe) that would land back on
-    // the same stop keeps going the same way until the stop changes, so these
-    // moves never get stuck between two stops.
-    function stepToward(u) {
-        var target = stopForUsability(u);
-        if (target === settledStop && u !== settledPos) {
-            var dir = u > settledPos ? 1 : -1;
-            for (var v = u + dir; v >= 0 && v <= N - 1; v += dir) {
-                var t = stopForUsability(v);
-                if (t !== settledStop) return t;
-            }
-        }
-        return target;
+    // The stop whose usability position is nearest to u.
+    function stopForUsability(u) {
+        return closest(function (i) {
+            return Math.abs(usabilityPos(i) - u);
+        });
     }
 
-    function toPos(value) {
-        var v = Math.round(Number(value));
-        if (!(v >= 0)) return 0;
+    // A move that is not a pointer drag (arrow keys, Home/End, screen-reader
+    // swipes) goes to the stop nearest the new position, but always at least
+    // one stop further the way it moved: if that would leave the handle where
+    // it was, it carries on to the next position that way. So one arrow press
+    // or swipe moves exactly one stop and never gets stuck; at either end
+    // there is nothing further, and nothing moves.
+    function stepToward(u) {
+        if (u === settledValue) return settledStop;
+        var dir = u > settledValue ? 1 : -1;
+        var target = stopForUsability(u);
+        if ((usabilityPos(target) - settledPos) * dir > EPS) return target;
+        var next = closest(function (i) {
+            var d = (usabilityPos(i) - settledPos) * dir;
+            return d > EPS ? d : null;
+        });
+        return next === -1 ? settledStop : next;
+    }
+
+    function clamp(v) {
+        if (!(v >= 0)) return 0;  // also NaN
         return v > N - 1 ? N - 1 : v;
+    }
+
+    // The security slider moves in whole stops.
+    function toStop(value) {
+        return clamp(Math.round(Number(value)));
+    }
+
+    // The usability slider's value as a position; not rounded, so a value
+    // between two ticks stays where it is.
+    function toUsability(value) {
+        return clamp(Number(value));
+    }
+
+    // The usability slider's step: one decimal place finer than the most
+    // precise position (0.1 for whole numbers, 0.01 for half steps such as
+    // 8.5, 0.001 for 8.25), and never finer than 0.000001. A decimal step
+    // divides every whole number, so both ends and every position sit on the
+    // slider's grid (within EPS); one native step (an arrow key, a
+    // screen-reader swipe) is smaller than any gap between two positions; and
+    // a click lands within half a step of where it was made. Never "any":
+    // with it, Firefox moves a whole unit per arrow press, and stepUp() throws.
+    function usabilityStep() {
+        for (var d = 0; d < 5; d++) {
+            var scale = Math.pow(10, d);
+            var fits = true;
+            for (var i = 0; i < N && fits; i++) {
+                if (stops[i].betterAt !== null) {
+                    var x = stops[i].betterAt * scale;
+                    fits = Math.abs(x - Math.round(x)) <= EPS;
+                }
+            }
+            if (fits) return Math.pow(10, -(d + 1)).toFixed(d + 1);
+        }
+        return '0.000001';
     }
 
     // Only touch the DOM when something changed, so the live regions do not
@@ -154,6 +213,7 @@
             useSlider.value = String(usabilityPos(i));
             settledStop = i;
             settledPos = usabilityPos(i);
+            settledValue = toUsability(useSlider.value);
         }
         setAttr(secSlider, 'aria-valuetext', secText);
         setAttr(useSlider, 'aria-valuetext', useText);
@@ -167,17 +227,19 @@
 
     // Security slider: the current stop is its value.
     function onSecurity() {
-        state.stop = toPos(secSlider.value);
+        state.stop = toStop(secSlider.value);
         dragMoved = false;  // a held usability drag must not undo this on release
+        notePressInput(secSlider);
         render(false);
     }
     secSlider.addEventListener('input', onSecurity);
     secSlider.addEventListener('change', onSecurity);
 
     // Usability slider. While a pointer (mouse, pen or finger) drags it, show
-    // the nearest stop live and settle on release, so it may land one or two
-    // places from where it was dropped. A press that does not move it changes
-    // nothing. Any other change (keys, screen readers) is a step.
+    // the nearest stop live and settle on the nearest stop on release. A drag
+    // that fires no input settles nothing; a mouse or pen click on a handle
+    // is handled separately below (see clickAt). Any other change
+    // (keys, screen readers) is a step.
     var dragging = false;
     var dragMoved = false;
     var dragPointer = null;  // pointerId that started the drag
@@ -185,7 +247,7 @@
     var dragTouch = null;    // Touch.identifier of the finger that started it
 
     function settleUsability() {
-        state.stop = stopForUsability(toPos(useSlider.value));
+        state.stop = stopForUsability(toUsability(useSlider.value));
         render(false);
     }
 
@@ -251,9 +313,21 @@
     }
     window.addEventListener('touchend', onTouchEnd);
     window.addEventListener('touchcancel', onTouchEnd);
+    // A lost release (the button came up where the page could not see it, e.g.
+    // after switching tab or app mid-drag): the drag's mouse or pen then moves
+    // with no buttons. That proves the button is up, so ending the drag here
+    // cannot fight a native drag the way clearing it on keydown or blur did.
+    // At once, not after a timer: Chrome can deliver this move and the next
+    // press together, and that press must find the old drag already ended.
+    window.addEventListener('pointermove', function (e) {
+        if (dragging && e.pointerId === dragPointer && e.pointerType !== 'touch' && e.buttons === 0) {
+            finishDrag();
+        }
+    });
 
     useSlider.addEventListener('input', function () {
-        var u = toPos(useSlider.value);
+        var u = toUsability(useSlider.value);
+        notePressInput(useSlider);
         if (dragging) {
             dragMoved = true;
             state.stop = stopForUsability(u);
@@ -265,11 +339,100 @@
     });
     // A change to the position it already shows is not a move (Chrome sends
     // one after a cancelled touch drag even when the next tap moves nothing).
+    // Exact: both sides come from the slider's own value string.
     useSlider.addEventListener('change', function () {
-        var u = toPos(useSlider.value);
-        if (dragging || u === settledPos) return;
+        var u = toUsability(useSlider.value);
+        if (dragging || u === settledValue) return;
         state.stop = stepToward(u);
         render(false);
+    });
+
+    // A mouse or pen press on a handle grabs it without moving it, so a click
+    // on a handle (its 44px circle; the box's corners act as track) fires no
+    // input, even when it is nearer another stop (neighbouring stops can be
+    // closer than that: 16px apart at 360px wide with half steps). Such a click counts as a click at that point: it
+    // goes to the nearest stop, unless that stop sits where the handle already
+    // is (pressing a handle in place changes nothing). Only a press on the
+    // slider itself that fired no input and moved at most CLICK_SLOP px
+    // sideways counts. Touch is left to the browser.
+    var CLICK_SLOP = 4;  // px a click may travel
+    var press = null;    // { slider, pointerId, x, moved }
+
+    // The slider value under clientX: the handle's centre travels from half a
+    // handle in from the left end to half a handle in from the right end.
+    function valueAt(slider, clientX) {
+        var hit = parseFloat(window.getComputedStyle(slider).getPropertyValue('--svu-hit'));
+        var inset = hit > 0 ? hit / 2 : 22;
+        var rect = slider.getBoundingClientRect();
+        var span = rect.width - 2 * inset;
+        if (!(span > 0)) return null;
+        return clamp((clientX - rect.left - inset) / span * (N - 1));
+    }
+
+    function clickAt(p) {
+        var v = valueAt(p.slider, p.x);
+        if (v === null) return;
+        var target;
+        if (p.slider === secSlider) {
+            target = clamp(Math.floor(v + 0.5 + EPS));  // a tie goes up, to the more secure stop
+            if (target === state.stop) return;
+        } else {
+            target = stopForUsability(v);
+            if (near(usabilityPos(target), settledPos)) return;
+        }
+        state.stop = target;
+        dragMoved = false;
+        render(false);
+    }
+
+    // An input on the pressed slider means the browser moved it itself; a
+    // change from anywhere else (the other slider, the switch) cancels the
+    // press, so its release cannot undo that change.
+    function notePressInput(slider) {
+        if (press && press.slider === slider) press.moved = true;
+        else press = null;
+    }
+
+    function forgetPress() {
+        press = null;
+    }
+
+    function onPress(e) {
+        press = null;
+        if (e.button !== 0 || e.pointerType === 'touch') return;
+        // After a lost release, Chrome can send the next press to the slider
+        // although it landed elsewhere on the page; only a press inside the
+        // slider's own box counts.
+        var r = e.currentTarget.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
+        press = { slider: e.currentTarget, pointerId: e.pointerId, x: e.clientX, moved: false };
+    }
+    // Any press anywhere first forgets an old one whose release was lost
+    // (capture phase, so it runs before onPress).
+    window.addEventListener('pointerdown', forgetPress, true);
+    secSlider.addEventListener('pointerdown', onPress);
+    useSlider.addEventListener('pointerdown', onPress);
+    // A context menu (Control-click on a Mac) is not a click.
+    secSlider.addEventListener('contextmenu', forgetPress);
+    useSlider.addEventListener('contextmenu', forgetPress);
+    window.addEventListener('pagehide', forgetPress);
+    window.addEventListener('pointercancel', function (e) {
+        if (press && e.pointerId === press.pointerId) press = null;
+    });
+    window.addEventListener('pointerup', function (e) {
+        var p = press;
+        if (!p || e.pointerId !== p.pointerId) return;
+        if (Math.abs(e.clientX - p.x) > CLICK_SLOP) {
+            press = null;
+            return;
+        }
+        // Just after the release, like finishSoon: Firefox writes the drop
+        // position after pointerup, and that input still counts.
+        window.setTimeout(function () {
+            if (press !== p) return;
+            press = null;
+            if (!p.moved) clickAt(p);
+        }, 0);
     });
 
     // Switch: the stop stays; the usability slider and phrase change only if
@@ -277,11 +440,13 @@
     toggle.addEventListener('change', function () {
         state.better = toggle.checked;
         dragMoved = false;  // a held usability drag must not undo this on release
+        forgetPress();
         render(false);
     });
 
     secSlider.max = String(N - 1);
     useSlider.max = String(N - 1);
+    useSlider.step = usabilityStep();
     render(false);
     app.hidden = false;
     if (fallback) fallback.hidden = true;

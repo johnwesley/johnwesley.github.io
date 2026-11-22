@@ -1,32 +1,48 @@
-last_reviewed: 2026-11-21
-source:
-  label: "Zero Trust Maturity Model"
-  url: "https://www.cisa.gov/zero-trust-maturity-model"
-stops:   # least secure first
-  - security: "No login"
+last_reviewed: 2026-11-22
+stops:   # least secure first; each stop adds a control to the ones before it
+  - security: "No controls"
     usability: "Nothing in your way"
-    basis: "Below the model"
-  - security: "One shared password"
-    usability: "Everyone already knows it"
-    basis: "Below the model"
-  - security: "A password each"
-    usability: "One more thing to remember"
-    basis: "Authentication: Traditional"
-  - security: "Password plus a code"
+    basis: "Starting point: nothing in place"
+  - security: "Two-step sign-in"
     usability: "One more prompt"
     better: "Passkey. One touch."
+    better_at: 8.5
+    basis: "Identity. Phishing-resistant multi-factor sign-in"
+  - security: "Private network only"
+    usability: "VPN first"
+    better: "No VPN. Checked on every request."
+    better_at: 8
+    basis: "Networks. Per-request access checks in place of a network perimeter"
+  - security: "Short-lived credentials"
+    usability: "Your key expired again"
+    better: "Issued automatically. Nothing to rotate."
+    better_at: 7.5
+    basis: "Identity. Automatically issued and renewed credentials for people and workloads"
+  - security: "Trusted devices only"
+    usability: "Not from your own laptop"
+    better: "Any healthy device, checked silently"
+    better_at: 7
+    basis: "Devices. Device health checks at sign-in, regardless of who owns the device"
+  - security: "Sensitive data stays put"
+    usability: "You can't send that"
+    better: "Labelled automatically, blocked only when it matters"
+    better_at: 6.5
+    basis: "Data. Automatic classification and risk-based sharing controls"
+  - security: "Least privilege"
+    usability: "Access denied. Ask your manager."
+    better: "You start with what your job needs"
+    better_at: 6
+    basis: "Identity. Role-based defaults with self-service requests"
+  - security: "No standing admin"
+    usability: "Wait for approval"
+    better: "Admin in one click, gone in an hour"
+    better_at: 5.5
+    basis: "Identity. Just-in-time, time-limited privileged access"
+  - security: "Every change reviewed"
+    usability: "Ships next week"
+    better: "Checked automatically, shipped today"
     better_at: 5
-    basis: "Authentication: Initial (MFA, password may be one factor) to Advanced (phishing-resistant, passwordless)"
-  - security: "Access by request"
-    usability: "File a ticket"
-    better: "Granted in seconds, gone when you're done"
-    better_at: 4
-    basis: "Access management: Optimal (automated just-in-time, just-enough access)"
-  - security: "Verified every session"
-    usability: "Prove it again"
-    better: "Checked in the background"
-    better_at: 3
-    basis: "Authentication: Optimal (continuous validation)"
+    basis: "Applications and workloads. Automated checks in the delivery pipeline"
   - security: "No remote access"
     usability: "Drive to the datacenter"
-    basis: "Beyond the model"
+    basis: "The far extreme: fully isolated"
