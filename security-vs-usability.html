@@ -1,0 +1,184 @@
+---
+layout: default
+title: Security vs. usability
+description: Two linked sliders showing what identity controls cost the people who use them.
+permalink: /security-vs-usability/
+stylesheet: /assets/css/security-vs-usability.css
+csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'"
+---
+{%- comment -%}
+  Content that changes over time lives in _data/security_vs_usability.yml.
+  The stops are rendered here as a plain table (the no-JavaScript view);
+  assets/js/security-vs-usability.js upgrades the page to the slider view.
+  CSP: no inline scripts, inline styles or event handlers on this page.
+{%- endcomment -%}
+{%- assign svu = site.data.security_vs_usability -%}
+{%- assign stops = svu.stops -%}
+{%- assign stop_count = stops | size -%}
+{%- assign last_stop = stop_count | minus: 1 -%}
+{%- assign number_words = "zero,one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen,twenty" | split: "," -%}
+{%- if stop_count < number_words.size -%}
+  {%- assign stop_count_words = number_words[stop_count] -%}
+{%- else -%}
+  {%- assign stop_count_words = stop_count -%}
+{%- endif -%}
+{%- comment -%}
+  A stop has a usable `better` when the phrase has at least one letter or
+  digit (slugify drops everything else, including Unicode spaces) and
+  better_at is a whole number from 0 to N-1. One "1"/"0" per stop, used by the table, the
+  sizers and the script's data, so all three always agree.
+{%- endcomment -%}
+{%- assign better_flags = "" -%}
+{%- for stop in stops -%}
+  {%- assign better_text = stop.better | append: "" -%}
+  {%- if better_text != "" -%}{%- assign better_text = better_text | slugify: "default" -%}{%- endif -%}
+  {%- assign at_text = stop.better_at | append: "" | strip -%}
+  {%- assign at_num = at_text | plus: 0 -%}
+  {%- assign at_check = at_num | round | append: "" -%}
+  {%- if better_text != "" and at_text != "" and at_check == at_text and at_num >= 0 and at_num <= last_stop -%}
+    {%- assign better_flags = better_flags | append: "1" -%}
+  {%- else -%}
+    {%- assign better_flags = better_flags | append: "0" -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign any_better = false -%}
+{%- if better_flags contains "1" -%}{%- assign any_better = true -%}{%- endif -%}
+{%- assign caption_first = "Anyone can use it. Anyone." -%}
+{%- assign caption_last = "Perfectly secure. Perfectly useless." -%}
+{%- assign note_off = "Turn this on to see what changes. Some controls can be made easier without being made weaker." -%}
+{%- assign note_better = "Same control, less friction. The slider moved because the words did." -%}
+{%- assign note_same = "Nothing to engineer here. The words stay, so the slider stays." -%}
+
+<div class="content svu">
+    <h2 class="svu-title">Security vs. usability</h2>
+    <p class="svu-lede">Identity: {{ stop_count_words }} {% if stop_count == 1 %}rule{% else %}rules{% endif %} for getting in.</p>
+
+    <table class="svu-table" id="svu-table">
+        <thead>
+            <tr>
+                <th scope="col">Security says</th>
+                <th scope="col">The user hears</th>
+                {%- if any_better %}
+                <th scope="col">Good engineering</th>
+                {%- endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {%- for stop in stops %}
+            {%- assign has_better = better_flags | slice: forloop.index0 %}
+            <tr>
+                <td class="svu-security-text">{{ stop.security | escape }}</td>
+                <td class="svu-usability-text">{{ stop.usability | escape }}</td>
+                {%- if any_better %}
+                <td class="svu-usability-text">{% if has_better == "1" %}{{ stop.better | escape }}{% endif %}</td>
+                {%- endif %}
+            </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+
+    <div class="svu-app" id="svu-app" hidden
+         data-caption-first="{{ caption_first | escape }}"
+         data-caption-last="{{ caption_last | escape }}"
+         data-note-off="{{ note_off | escape }}"
+         data-note-better="{{ note_better | escape }}"
+         data-note-same="{{ note_same | escape }}">
+        <p class="svu-hint">Move either slider. The other one moves the opposite way.</p>
+
+        <div class="svu-slider svu-slider-security">
+            <label for="svu-security">Security</label>
+            <div class="svu-track">
+                <div class="svu-ticks" aria-hidden="true">{% for stop in stops %}<span></span>{% endfor %}</div>
+                <input type="range" id="svu-security" min="0" max="{{ last_stop }}" step="1" autocomplete="off">
+            </div>
+            <div class="svu-ends"><span>Least secure</span><span>Most secure</span></div>
+        </div>
+
+        <div class="svu-slider svu-slider-usability">
+            <label for="svu-usability">Usability</label>
+            <div class="svu-track">
+                <div class="svu-ticks" aria-hidden="true">{% for stop in stops %}<span></span>{% endfor %}</div>
+                <input type="range" id="svu-usability" min="0" max="{{ last_stop }}" step="1" autocomplete="off">
+            </div>
+            <div class="svu-ends"><span>Least usable</span><span>Most usable</span></div>
+        </div>
+
+        {%- comment -%}
+          Each .svu-stack overlays every text its live element can show
+          (aria-hidden, invisible), so its height never changes and the
+          controls below never move under the pointer.
+        {%- endcomment %}
+        <div aria-live="polite">
+            <div class="svu-pair">
+                <div class="svu-cell">
+                    <p class="svu-cell-label">Security says</p>
+                    <div class="svu-stack">
+                        <p class="svu-phrase svu-security-text" id="svu-security-phrase"></p>
+                        {%- for stop in stops %}
+                        <p class="svu-phrase svu-sizer" aria-hidden="true">{{ stop.security | escape }}</p>
+                        {%- endfor %}
+                    </div>
+                </div>
+                <div class="svu-cell">
+                    <p class="svu-cell-label">The user hears</p>
+                    <div class="svu-stack">
+                        <p class="svu-phrase svu-usability-text" id="svu-usability-phrase"></p>
+                        {%- for stop in stops %}
+                        {%- assign has_better = better_flags | slice: forloop.index0 %}
+                        <p class="svu-phrase svu-sizer" aria-hidden="true">{{ stop.usability | escape }}</p>
+                        {%- if has_better == "1" %}
+                        <p class="svu-phrase svu-sizer" aria-hidden="true">{{ stop.better | escape }}</p>
+                        {%- endif %}
+                        {%- endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="svu-stack svu-caption">
+                <p id="svu-caption"></p>
+                <p class="svu-sizer" aria-hidden="true">{{ caption_first }}</p>
+                <p class="svu-sizer" aria-hidden="true">{{ caption_last }}</p>
+            </div>
+        </div>
+
+        <div class="svu-switch">
+            <label class="svu-toggle" for="svu-better"><input type="checkbox" id="svu-better" aria-describedby="svu-note"> Good engineering</label>
+            <div class="svu-stack">
+                <p class="svu-note" id="svu-note" aria-live="polite"></p>
+                <p class="svu-note svu-sizer" aria-hidden="true">{{ note_off }}</p>
+                <p class="svu-note svu-sizer" aria-hidden="true">{{ note_better }}</p>
+                <p class="svu-note svu-sizer" aria-hidden="true">{{ note_same }}</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="svu-footer">
+        <p>Based on the Identity pillar of CISA's <a href="{{ svu.source.url | escape }}">{{ svu.source.label | escape }}</a>.</p>
+        <p>Last reviewed <time datetime="{{ svu.last_reviewed | date: '%Y-%m-%d' }}">{{ svu.last_reviewed | date: "%B %-d, %Y" }}</time></p>
+    </footer>
+</div>
+{%- comment -%}
+  The script's data: only what it uses (no `basis`), and `better` only where
+  the flag above says it is usable (an unusable one is flagged
+  better_ignored, so the script can warn in the console). Every "<" becomes the JSON escape
+  BACKSLASH-u003c so no phrase can end the block early (e.g. "</script>").
+  That replacement must stay a literal backslash followed by u003c: some
+  editors and tools decode it to "<", which silently turns it into a no-op.
+{%- endcomment -%}
+{%- capture stops_json -%}
+[
+{%- for stop in stops -%}
+  {%- assign has_better = better_flags | slice: forloop.index0 -%}
+  {"security":{{ stop.security | append: "" | jsonify }},"usability":{{ stop.usability | append: "" | jsonify }}
+  {%- if has_better == "1" -%}
+    ,"better":{{ stop.better | append: "" | jsonify }},"better_at":{{ stop.better_at | append: "" | strip | plus: 0 }}
+  {%- else -%}
+    {%- unless stop.better == nil and stop.better_at == nil -%},"better_ignored":true{%- endunless -%}
+  {%- endif -%}
+  }{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
+{%- endcapture %}
+
+<script type="application/json" id="stops-data">{{ stops_json | replace: "<", "\u003c" }}</script>
+<script src="{{ '/assets/js/security-vs-usability.js' | relative_url }}" defer></script>

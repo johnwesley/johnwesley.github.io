@@ -1,0 +1,331 @@
+/* Security vs. usability page (security-vs-usability.html).
+   Builds on style.css: same fonts, colours, column and link style.
+   Adds two colours only, one for Security and one for Usability; they
+   differ in lightness as well as hue in both themes. */
+
+:root {
+    --svu-security: #1d4ed8;   /* 6.7:1 on #fff */
+    --svu-usability: #b45309;  /* 5.0:1 on #fff */
+    --svu-hit: 44px;           /* slider handle tap target */
+    --svu-handle: 28px;        /* visible part of the handle */
+    --svu-track: 4px;
+}
+
+[data-theme="dark"] {
+    --svu-security: #60a5fa;   /* 6.9:1 on #1a1a1a */
+    --svu-usability: #fdba74;  /* 10.3:1 on #1a1a1a */
+}
+
+.svu [hidden] {
+    display: none !important;
+}
+
+/* Text */
+.content .svu-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
+.content .svu-lede {
+    margin-bottom: 1.5rem;
+}
+
+.content .svu-hint {
+    color: var(--muted-color);
+    margin-bottom: 1.5rem;
+}
+
+.svu-security-text { color: var(--svu-security); }
+.svu-usability-text { color: var(--svu-usability); }
+
+/* Sliders */
+.svu-slider {
+    margin-bottom: 1.25rem;
+}
+
+.svu-slider label {
+    display: block;
+    font-weight: 600;
+}
+
+.svu-slider-security label { color: var(--svu-security); }
+.svu-slider-usability label { color: var(--svu-usability); }
+.svu-slider-security { --svu-handle-color: var(--svu-security); }
+.svu-slider-usability { --svu-handle-color: var(--svu-usability); }
+
+.svu-track {
+    position: relative;
+}
+
+/* One tick per stop, centred on where the handle's centre can stop. They sit
+   behind the input, so the track and handle paint over them. */
+.svu-ticks {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 12px;
+    margin-top: -6px;
+    padding: 0 calc(var(--svu-hit) / 2 - 1px);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.svu-ticks span {
+    width: 2px;
+    background: var(--muted-color);
+}
+
+.svu input[type="range"] {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: var(--svu-hit);
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.svu input[type="range"]::-webkit-slider-runnable-track {
+    height: var(--svu-track);
+    background: var(--muted-color);
+    border: none;
+    border-radius: 2px;
+}
+
+.svu input[type="range"]::-moz-range-track {
+    height: var(--svu-track);
+    background: var(--muted-color);
+    border: none;
+    border-radius: 2px;
+}
+
+/* The handle is 44px square to tap; a transparent border leaves a 28px
+   visible circle. box-shadow: none removes iOS Safari's default handle
+   shadow. */
+.svu input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    width: var(--svu-hit);
+    height: var(--svu-hit);
+    margin-top: calc((var(--svu-track) - var(--svu-hit)) / 2);
+    border: calc((var(--svu-hit) - var(--svu-handle)) / 2) solid transparent;
+    border-radius: 50%;
+    background: var(--svu-handle-color);
+    background-clip: padding-box;
+    box-shadow: none;
+}
+
+.svu input[type="range"]::-moz-range-thumb {
+    box-sizing: border-box;
+    width: var(--svu-hit);
+    height: var(--svu-hit);
+    border: calc((var(--svu-hit) - var(--svu-handle)) / 2) solid transparent;
+    border-radius: 50%;
+    background: var(--svu-handle-color);
+    background-clip: padding-box;
+    box-shadow: none;
+}
+
+.svu input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--link-color);
+    outline-offset: 2px;
+}
+
+/* Inside the 44px box, so the ring never crosses the end labels below */
+.svu input[type="range"]:focus-visible {
+    outline: 2px solid var(--link-color);
+    outline-offset: -2px;
+}
+
+.svu-ends {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.85em;
+    color: var(--muted-color);
+}
+
+.svu-ends span:last-child {
+    text-align: right;
+}
+
+/* Current pair: side by side, stacked on narrow screens */
+.svu-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem 1.5rem;
+    margin-top: 2rem;
+}
+
+.content .svu-cell-label {
+    margin: 0;
+    font-size: 0.85em;
+    color: var(--muted-color);
+}
+
+.content .svu-phrase {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+/* Overlay every text a live element can show, so the box keeps the height
+   of the longest one and nothing below it moves. */
+.svu-stack {
+    display: grid;
+}
+
+.svu-stack > * {
+    grid-area: 1 / 1;
+}
+
+.svu-sizer {
+    visibility: hidden;
+}
+
+.svu-caption {
+    margin-top: 0.75rem;
+}
+
+.content .svu-caption p {
+    margin: 0;
+    font-style: italic;
+    color: var(--muted-color);
+}
+
+/* Good engineering switch */
+.svu-switch {
+    margin-top: 1.25rem;
+}
+
+.svu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.svu-toggle input {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    accent-color: var(--text-color);
+    cursor: pointer;
+}
+
+.content .svu-note {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--muted-color);
+}
+
+/* No-JavaScript view: every stop as a row */
+.svu-table {
+    width: 100%;
+    table-layout: fixed;  /* equal columns: long words wrap instead of widening the page */
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.svu-table th,
+.svu-table td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    border-bottom: 1px solid var(--muted-color);
+    overflow-wrap: break-word;
+}
+
+.svu-table th {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--muted-color);
+}
+
+.svu-table th:last-child,
+.svu-table td:last-child {
+    padding-right: 0;
+}
+
+/* Source and review date */
+.svu-footer {
+    margin-top: 3rem;
+    font-size: 0.9em;
+    color: var(--muted-color);
+}
+
+.content .svu-footer p {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .content .svu-title {
+        font-size: 1.3rem;
+    }
+
+    .content .svu-phrase {
+        font-size: 1.15rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .content .svu-title {
+        font-size: 1.2rem;
+    }
+
+    .content .svu-phrase {
+        font-size: 1.1rem;
+    }
+
+    .svu-pair {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Forced colours (Windows Contrast themes) would paint the track and ticks
+   in the page colour; draw them in system colours instead. The handle is the
+   28px dot on the 4px line. */
+@media (forced-colors: active) {
+    .svu input[type="range"],
+    .svu-ticks {
+        forced-color-adjust: none;
+    }
+
+    .svu-ticks span {
+        background: CanvasText;
+    }
+
+    .svu input[type="range"]::-webkit-slider-runnable-track {
+        background: CanvasText;
+    }
+
+    .svu input[type="range"]::-moz-range-track {
+        background: CanvasText;
+    }
+
+    /* CanvasText, not Highlight: Chrome can make Highlight translucent,
+       which lets the track show through the handle */
+    .svu input[type="range"]::-webkit-slider-thumb {
+        background-color: CanvasText;
+    }
+
+    .svu input[type="range"]::-moz-range-thumb {
+        background-color: CanvasText;
+    }
+
+    .svu input[type="range"]:focus-visible {
+        outline-color: Highlight;
+    }
+}

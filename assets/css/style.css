@@ -135,6 +135,17 @@ h1 {
     margin-top: 0;
 }
 
+/* Projects: one entry per line, like paragraphs (role="list" in the markup
+   keeps list semantics in Safari despite list-style: none) */
+.project-list {
+    list-style: none;
+    margin-bottom: 1.5rem;
+}
+
+.project-list li + li {
+    margin-top: 1rem;
+}
+
 /* Links */
 a {
     color: var(--link-color);

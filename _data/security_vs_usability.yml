@@ -1,0 +1,32 @@
+last_reviewed: 2026-11-21
+source:
+  label: "Zero Trust Maturity Model"
+  url: "https://www.cisa.gov/zero-trust-maturity-model"
+stops:   # least secure first
+  - security: "No login"
+    usability: "Nothing in your way"
+    basis: "Below the model"
+  - security: "One shared password"
+    usability: "Everyone already knows it"
+    basis: "Below the model"
+  - security: "A password each"
+    usability: "One more thing to remember"
+    basis: "Authentication: Traditional"
+  - security: "Password plus a code"
+    usability: "One more prompt"
+    better: "Passkey. One touch."
+    better_at: 5
+    basis: "Authentication: Initial (MFA, password may be one factor) to Advanced (phishing-resistant, passwordless)"
+  - security: "Access by request"
+    usability: "File a ticket"
+    better: "Granted in seconds, gone when you're done"
+    better_at: 4
+    basis: "Access management: Optimal (automated just-in-time, just-enough access)"
+  - security: "Verified every session"
+    usability: "Prove it again"
+    better: "Checked in the background"
+    better_at: 3
+    basis: "Authentication: Optimal (continuous validation)"
+  - security: "No remote access"
+    usability: "Drive to the datacenter"
+    basis: "Beyond the model"
